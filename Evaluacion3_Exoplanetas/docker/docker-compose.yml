@@ -1,0 +1,43 @@
+services:
+
+  # ─── Servicio 1: ETL (Nicolas) ───────────────────────────────
+  etl:
+    build:
+      context: ..
+      dockerfile: etl/Dockerfile.etl
+    volumes:
+      - db-data:/data
+      - ../Datos:/data/raw:ro
+    environment:
+      - DB_PATH=/data/exoplanets.db
+    restart: "no"
+
+  # ─── Servicios 2 y 3: API y Dashboard (Moira) ────────────────
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    environment:
+      - DB_PATH=/data/exoplanets.db
+    volumes:
+      - db-data:/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      - etl
+    restart: unless-stopped
+
+  dashboard:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dashboard
+    environment:
+      - API_URL=http://api:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  db-data:
