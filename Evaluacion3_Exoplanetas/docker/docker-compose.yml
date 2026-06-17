@@ -7,7 +7,7 @@ services:
       dockerfile: etl/Dockerfile.etl
     volumes:
       - db-data:/data
-      - ../Datos:/data/raw:ro
+      - ../data:/data/raw:ro
     environment:
       - DB_PATH=/data/exoplanets.db
     restart: "no"

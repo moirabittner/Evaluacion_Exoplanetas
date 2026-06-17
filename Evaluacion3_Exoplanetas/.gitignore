@@ -1,0 +1,12 @@
+# Base de datos generada (la crea el ETL o crear_bd.py; no se versiona)
+data/exoplanets.db
+data/*.db-journal
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Sistema
+.DS_Store

@@ -10,10 +10,34 @@ logging.basicConfig(level=logging.INFO)
 
 DB_PATH = os.getenv("DB_PATH", "/data/exoplanets.db")
 
+# Columnas que cada fuente debe traer si o si.
+COLUMNAS_CSV = [
+    "pl_name", "pl_hostname", "pl_discmethod", "discovery_mission",
+    "planets_in_system", "pl_orbper", "pl_orbsmax", "pl_orbeccen",
+    "pl_bmassj", "pl_radj", "pl_density", "st_dist", "st_teff",
+    "st_mass", "st_rad",
+]
+COLUMNAS_API = [
+    "pl_name", "hostname", "discoverymethod", "pl_orbper", "pl_orbsmax",
+    "pl_orbeccen", "pl_bmassj", "pl_radj", "pl_dens", "sy_dist",
+    "st_teff", "st_mass", "st_rad",
+]
+
+
+def validar_esquema(df, columnas_requeridas, fuente):
+    """Revisa que la fuente traiga todas las columnas esperadas.
+    Si falta alguna, corta el proceso con un error claro."""
+    faltantes = [c for c in columnas_requeridas if c not in df.columns]
+    if faltantes:
+        raise ValueError(f"Faltan columnas en {fuente}: {faltantes}")
+    logging.info(f"Esquema de {fuente} validado ({len(columnas_requeridas)} columnas).")
+
+
 def extraer_csv():
     """Fuente 1: CSV de la Evaluación 2."""
     logging.info("Extrayendo CSV...")
     df = pd.read_csv("/data/raw/planets_clean.csv")
+    validar_esquema(df, COLUMNAS_CSV, "CSV")
     return df
 
 def extraer_api():
@@ -30,7 +54,10 @@ def extraer_api():
     try:
         response = requests.get(url, params={"query": query, "format": "json"}, timeout=30)
         response.raise_for_status()
-        return pd.DataFrame(response.json())
+        df = pd.DataFrame(response.json())
+        if not df.empty:
+            validar_esquema(df, COLUMNAS_API, "API NASA")
+        return df
     except Exception as e:
         logging.error(f"Error en API: {e}")
         return pd.DataFrame()
@@ -82,7 +109,7 @@ def transformar(df_csv, df_api):
         df_unificado = df1
 
     # Eliminar duplicados por nombre
-    df_unificado = df_unificado.drop_duplicates(subset=["nombre"])
+    df_unificado = df_unificado.drop_duplicates(subset=["nombre"]).copy()
 
     # Calcular planet_type
     df_unificado["planet_type"] = df_unificado["radio_jup"].apply(
