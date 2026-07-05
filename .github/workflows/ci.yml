@@ -1,0 +1,35 @@
+name: CI Pipeline
+
+# Se ejecuta automaticamente en cada push o pull request a main o develop.
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Descarga el codigo del repositorio.
+      - name: Checkout del codigo
+        uses: actions/checkout@v4
+
+      # 2. Instala Python 3.11.
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 3. Instala las dependencias del ETL, de la API y las de testing.
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r Evaluacion3_Exoplanetas/etl/requirements.txt
+          pip install -r Evaluacion3_Exoplanetas/api/requirements.txt
+          pip install pytest httpx
+
+      # 4. Ejecuta todos los tests unitarios (ETL y API).
+      - name: Ejecutar tests
+        run: pytest Evaluacion3_Exoplanetas/tests/ -v
