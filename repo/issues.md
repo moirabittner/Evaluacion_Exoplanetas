@@ -1,33 +1,42 @@
-# Issues — Evaluacion_Exoplanetas
+# Problemas técnicos y decisiones — Evaluacion_Exoplanetas
 
-## Issues registrados durante el desarrollo
+## Cómo gestionamos los problemas
 
-### Issue #1 — Variables pl_bmassj y pl_orbeccen constantes tras normalización
-- **Título:** Variables pl_bmassj y pl_orbeccen quedan constantes tras imputación con mediana
-- **Descripción:** Al aplicar imputación con mediana en la Evaluación 1, las columnas `pl_bmassj` y `pl_orbeccen` quedaron con desviación estándar prácticamente cero, lo que inutilizaba estas variables para los modelos.
-- **Decisión tomada:** Volver al CSV original (`planets.csv`) para los modelos de la Evaluación 2 y trabajar solo con los 509 planetas que tienen masa y radio observados de verdad. Documentado en el commit: `se terminó el árbol de decisiones y se encontraron problemas con las variables escogidas para la regresión lineal`.
-- **Estado:** Cerrado ✅
+Los problemas técnicos que fueron surgiendo los discutimos y resolvimos **en conjunto
+durante las sesiones de taller a través del AVA de Duoc UC**, en lugar de usar la pestaña
+formal de *Issues* de GitHub. A continuación documentamos los principales problemas que
+enfrentamos y cómo los resolvimos, como evidencia del trabajo colaborativo y de la toma de
+decisiones técnicas a lo largo del semestre.
 
-### Issue #2 — Gráficos de regresión lineal con datos apilados en x≈1.0
-- **Título:** Scatter de masa vs radio muestra todos los puntos apilados por escala
-- **Descripción:** Al usar `pl_bmassj_norm` para graficar, todos los valores quedaban comprimidos en x≈1.0 por la normalización MinMax sobre datos con outliers extremos.
-- **Decisión tomada:** Cambiar a las variables originales `st_teff` y `st_rad` (temperatura y radio estelar) que tienen distribución natural adecuada para graficar.
-- **Estado:** Cerrado ✅
+### Problema 1 — Variables `pl_bmassj` y `pl_orbeccen` constantes tras la imputación
+- **Situación:** al imputar con mediana en la Evaluación 1, estas columnas quedaron con
+  desviación estándar casi cero, lo que las inutilizaba para los modelos.
+- **Decisión:** volver al CSV original (`planets.csv`) para los modelos de la Evaluación 2 y
+  trabajar solo con los 509 planetas que tienen masa y radio observados de verdad.
+- **Estado:** Resuelto ✅
 
-### Issue #3 — Integración ETL con esquema de la API
-- **Título:** Definir esquema exacto de la tabla planets para compatibilidad ETL-API
-- **Descripción:** Necesidad de acordar los nombres exactos de las 16 columnas de la tabla `planets` en SQLite para que el ETL (Nicolas) y la API (Moira) fueran compatibles sin modificar el código de cada uno.
-- **Decisión tomada:** Moira redactó la guía de integración (`Guia_integracion_Moira_Nicolas.docx`) con el esquema exacto. Nicolas adaptó el ETL para respetar esos nombres.
-- **Estado:** Cerrado ✅
+### Problema 2 — Gráficos de regresión lineal con datos apilados en x≈1.0
+- **Situación:** al usar `pl_bmassj_norm` para graficar, los puntos quedaban comprimidos por
+  la normalización MinMax sobre datos con outliers extremos.
+- **Decisión:** usar las variables originales `st_teff` y `st_rad`, con distribución natural
+  adecuada para graficar.
+- **Estado:** Resuelto ✅
 
-### Issue #4 — NaN en columna planet_type al entrenar modelos
-- **Título:** ValueError: Input contains NaN al entrenar modelos de clasificación
-- **Descripción:** La columna `planet_type` tenía valores NaN en algunas filas, lo que causaba error al pasarla como target a `LogisticRegression`.
-- **Decisión tomada:** Agregar `dropna(subset=['planet_type'])` antes de separar features y target. Documentado en el proceso de corrección de la Evaluación 2.
-- **Estado:** Cerrado ✅
+### Problema 3 — Integración del ETL con el esquema de la API
+- **Situación:** había que acordar los nombres exactos de las columnas de la tabla `planets`
+  para que el ETL (Nicolás) y la API (Moira) fueran compatibles sin tocar el código del otro.
+- **Decisión:** acordamos y documentamos el esquema de la tabla; el ETL se adaptó para
+  respetar esos nombres.
+- **Estado:** Resuelto ✅
 
-### Issue #5 — CI/CD: workflow de GitHub Actions para tests automáticos
-- **Título:** Implementar CI Pipeline con GitHub Actions
-- **Descripción:** La EFT requiere evidencia de CI/CD. Se necesitaba un workflow que ejecutara automáticamente los tests unitarios en cada push a main o develop.
-- **Decisión tomada:** Crear `.github/workflows/ci.yml` que instala dependencias del ETL y la API y ejecuta `pytest tests/ -v`.
-- **Estado:** Cerrado ✅
+### Problema 4 — `NaN` en la columna `planet_type` al entrenar modelos
+- **Situación:** `planet_type` tenía valores NaN en algunas filas, lo que causaba error al
+  pasarla como target a los modelos de clasificación.
+- **Decisión:** agregar `dropna(subset=['planet_type'])` antes de separar features y target.
+- **Estado:** Resuelto ✅
+
+### Problema 5 — Falta de evidencia de CI/CD
+- **Situación:** la EFT requiere evidencia de automatización y CI/CD.
+- **Decisión:** crear `.github/workflows/ci.yml` con GitHub Actions, que instala las
+  dependencias del ETL y la API y ejecuta `pytest tests/` automáticamente en cada push.
+- **Estado:** Resuelto ✅

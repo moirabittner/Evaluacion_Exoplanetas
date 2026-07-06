@@ -1,28 +1,43 @@
-# Pull Requests — Evaluacion_Exoplanetas
+# Integración del trabajo — Evaluacion_Exoplanetas
 
-## Pull Requests realizados
+## Cómo integramos el trabajo en equipo
 
-### PR #1 — Integración del pipeline ETL con la base de datos
-- **Rama origen:** feature/etl-pipeline
-- **Rama destino:** main
-- **Descripción:** Implementación completa del pipeline ETL (`etl.py`, `clasificar.py`) con las tres fuentes de datos (CSV, API NASA, SQLite), validación de esquemas, manejo de errores y Dockerfile del ETL.
-- **Revisora:** moibittner
-- **Estado:** Mergeado ✅
+Durante todo el semestre trabajamos de forma coordinada, principalmente en las sesiones de
+taller a través del **AVA (Ambiente Virtual de Aprendizaje) de Duoc UC**, además de
+coordinación continua fuera del horario de clases. Cada integrante desarrolló su parte del
+proyecto en su propia rama y, una vez que un avance estaba listo y probado, lo integrábamos
+a `main` mediante **merge desde la terminal** (`git merge`), después de revisar juntos que
+todo funcionara.
 
-### PR #2 — API REST y Dashboard Streamlit
-- **Rama origen:** feature/dashboard
-- **Rama destino:** main
-- **Descripción:** Implementación de la API REST con FastAPI (endpoints `/planetas`, `/estadisticas`, `/salud`, `/docs`) y el dashboard Streamlit con tres vistas diferenciadas por audiencia: Ejecutiva, Técnica y Operativa. Incluye `Dockerfile.api` y `Dockerfile.dashboard`.
-- **Revisor:** Nicolas Carrasco
-- **Estado:** Mergeado ✅
+Es importante aclarar nuestro flujo real: **la integración se realizó con merge en la
+terminal antes de consolidar en `main`**, y no a través de la interfaz formal de Pull
+Requests de GitHub. Optamos por este flujo porque trabajábamos de manera sincrónica en las
+sesiones del AVA, revisando el código en conjunto en el momento de integrarlo.
 
-### PR #3 — Orquestación Docker completa
-- **Rama origen:** feature/etl-pipeline
-- **Rama destino:** main
-- **Descripción:** Archivo `docker-compose.yml` que orquesta los tres servicios (etl, api, dashboard) con el volumen compartido `db-data` y las variables de entorno `DB_PATH` y `API_URL`. El servicio `api` depende de `etl` y `dashboard` depende de `api`.
-- **Revisora:** moibittner
-- **Estado:** Mergeado ✅
+## Ramas integradas a `main`
 
-## Evidencia de trabajo colaborativo en el historial
+### Rama `api/rest` — Moira Bittner
+Desarrollo de la API REST con FastAPI (`api/main.py`, `api/database.py`, `api/models.py`) y
+del dashboard Streamlit con las tres vistas (`dashboards/app.py`), junto con los Dockerfiles
+de la API y del dashboard. Integrada a `main` mediante merge en terminal tras revisión
+conjunta.
 
-El commit `Merge branch 'main' of https://github.com/moirabittner/Evaluacion1_Exoplanetas` registrado en el historial confirma que se trabajó con ramas paralelas y se integraron mediante merge. Los commits alternados entre Nicolas Carrasco y moibittner a lo largo de todo el historial evidencian la distribución continua del trabajo entre ambos integrantes.
+### Rama `pipeline_etl` — Nicolás Carrasco
+Desarrollo del pipeline ETL (`etl/etl.py`, `etl/clasificar.py`, `etl/Dockerfile.etl`) y del
+`docker/docker-compose.yml` que orquesta los servicios. Integrada a `main` mediante merge en
+terminal tras revisión conjunta.
+
+## Acuerdo de integración entre ramas
+
+El punto de encuentro entre ambas ramas fue el **esquema de la tabla `planets` en SQLite**.
+Lo acordamos al inicio y lo documentamos, de modo que mientras el ETL respetara los nombres
+de columna acordados, la API y el dashboard funcionaban sin cambios de código. Este acuerdo
+fue lo que nos permitió trabajar en paralelo e integrar con merge sin conflictos mayores.
+
+## Evidencia en el historial
+
+- El commit `Merge branch 'main'` registrado en el historial evidencia la integración de
+  trabajo paralelo entre ramas.
+- Los commits alternados entre Nicolás Carrasco y Moira Bittner a lo largo de todo el
+  historial evidencian la distribución continua del trabajo entre ambos integrantes.
+- El detalle completo está en `historial_commits.md` y `ramas.md`.
